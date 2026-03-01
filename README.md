@@ -1,70 +1,79 @@
-# ZeekXAI - Analisi e Classificazione di Attacchi in Infrastrutture Critiche
+# ZeekXAI - Analysis and Classification of Attacks in Critical Infrastructures
 
-ZeekXAI è un progetto di tesi che mira a rilevare e classificare tattiche di attacco informatico (basate sulla matrice MITRE ATT&CK) all'interno di infrastrutture critiche, utilizzando dati di traffico di rete (log Zeek).
+ZeekXAI is a Master's thesis project focused on detecting and classifying cyberattack tactics—mapped to the MITRE ATT&CK framework—within critical infrastructures using network traffic data (Zeek logs).
 
-Il sistema integra algoritmi di Machine Learning (Random Forest, Decision Tree, Logistic Regression, Naive Bayes) con tecniche di **Explainable AI (XAI)** come SHAP (Shapley Additive Explanations) e PDP (Partial Dependence Plots) per rendere trasparenti e interpretabili le decisioni dei modelli.
+This system integrates Machine Learning algorithms (Random Forest, Decision Tree, Logistic Regression, Naive Bayes) with **Explainable AI (XAI)** techniques, such as SHAP (Shapley Additive Explanations) and PDP (Partial Dependence Plots). The goal is to ensure that the models' decision-making processes are transparent, interpretable, and understandable for cybersecurity analysts.
 
-## 🚀 Caratteristiche Principali
+## 🚀 Key Features
 
-*   **Analisi Dati Zeek**: Caricamento e parsing efficiente di log di rete in formato Parquet.
-*   **Feature Engineering**: Calcolo automatico di metriche derivate (es. `pktAtsec`, `BitRate`, `interTime`) per arricchire il dataset.
-*   **Machine Learning**: Addestramento e valutazione di modelli per:
-    *   **Classificazione Binaria**: Distinzione tra traffico benigno e maligno.
-    *   **Classificazione Multiclasse**: Identificazione della specifica tattica MITRE (es. *Reconnaissance*, *Discovery*, *Resource Development*).
+*   **Zeek Data Analysis**: Efficient loading and parsing of network logs in Parquet format.
+*   **Feature Engineering**: Automatic calculation of derived metrics (e.g., `pktAtsec`, `BitRate`, `interTime`) to enrich the dataset.
+*   **Machine Learning**: Training and evaluation of models for:
+    *   **Binary Classification**: Distinguishing between benign and malicious traffic.
+    *   **Multiclass Classification**: Identifying specific MITRE tactics (e.g., *Reconnaissance*, *Discovery*, *Resource Development*).
 *   **Explainable AI (XAI)**:
-    *   **SHAP Global & Local**: Analisi dell'importanza delle feature e del loro impatto sulle predizioni (Beeswarm plots, Bar charts).
-    *   **Partial Dependence Plots (PDP)**: Visualizzazione della relazione marginale tra feature e output del modello.
-*   **Reportistica**: Generazione automatica di grafici (PDF) e metriche di performance (CSV/JSON).
+    *   **SHAP (Global & Local)**: Feature importance analysis and its impact on predictions (Beeswarm plots, Bar charts, Waterfall plots).
+    *   **Partial Dependence Plots (PDP)**: Visualizing the marginal relationship between features and the model's output.
+*   **Automated Reporting**: Generation of performance metrics (CSV/JSON) and visualizations (PDF).
 
-## 🛠️ Installazione
+## 🛠️ Installation
 
-Assicurati di avere Python 3.8+ installato.
+Make sure you have Python 3.8+ installed.
 
-1.  Clona il repository:
+1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/username/ZeekXAI.git
-    cd ZeekXAI
+    git clone https://github.com/Balbus95/ZeekXAI-private.git
+    cd ZeekXAI-private
     ```
 
-2.  Crea un ambiente virtuale (opzionale ma consigliato):
+2.  **Create a virtual environment (optional but highly recommended):**
     ```bash
     python -m venv .venv
-    source .venv/bin/activate  # Su Windows: .venv\Scripts\activate
+    
+    # On Windows:
+    .venv\Scripts\activate
+    
+    # On Linux/macOS:
+    source .venv/bin/activate
     ```
 
-3.  Installa le dipendenze:
+3.  **Install dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
 
-## 📦 Struttura del Progetto
+## 📦 Project Structure
 
-*   `zeekXAI.py`: Script principale per l'addestramento dei modelli e la generazione delle spiegazioni XAI.
-*   `UWF-ZeekDataFall22/`: Cartella contenente il dataset (file Parquet).
-*   `cache/`: Directory per il salvataggio dei modelli addestrati e dataset processati (per velocizzare esecuzioni successive).
-*   `output/`: Directory contenente i risultati (grafici, report, log).
+*   `zeekXAI.py`: The main script to execute the end-to-end pipeline (training, evaluation, and XAI generation).
+*   `analyze_shap.py` / `analyze_shap_waterfall.py` / `analyze_pdp.py`: Dedicated auxiliary scripts for running and refining specific SHAP and PDP visualizations.
+*   `list_features_values.py`: Utility script for exploring feature values.
+*   `UWF-ZeekDataFall22/`: Directory containing the dataset in Parquet format.
+*   `cache/`: Directory for caching trained models and processed datasets to speed up subsequent runs.
+*   `output/`: Directory where all generated results (graphs, reports, execution logs) are saved.
+*   `latex/` & `presentazione/`: LaTeX source files, thesis documentation, and presentation materials.
+*   `* .md, .txt, .pdf`: Various notes, guidelines, and reference papers (e.g., `paper_dataset_ZeekDataFall22.pdf`) supporting the thesis research.
 
-## 💻 Utilizzo
+## 💻 Usage
 
-### Esecuzione Completa (Training + XAI)
-Per avviare l'intera pipeline di analisi, eseguire:
+### End-to-End Execution (Training + Validation + XAI)
+To start the complete analysis pipeline, run:
 
 ```bash
 python zeekXAI.py
 ```
 
-Lo script eseguirà:
-1.  Caricamento e pulizia dei dati.
-2.  Addestramento dei modelli (se non presenti in cache).
-3.  Valutazione delle performance.
-4.  Generazione dei plot SHAP e PDP nella cartella `output/test_<timestamp>`.
+This script will automatically perform the following steps:
+1.  Load, clean, and preprocess the dataset.
+2.  Train the ML models (or load them from the `cache/` if they were already trained).
+3.  Evaluate the models' performance and compute metrics.
+4.  Generate SHAP and PDP plots, saving them in a dedicated timestamped folder inside `output/` (e.g., `output/test_<timestamp>`).
 
-## 📊 Output Generati
+## 📊 Generated Outputs
 
-Tutti i risultati vengono salvati in `output/test_<timestamp>/`:
-*   **Metriche**: `B_01_MetricsTable_Comparative_AllMulticlass.csv`
-*   **Grafici**:
-    *   `A_01_ClassDistribution...pdf`: Distribuzione delle classi.
-    *   `B_02_ConfusionMatrix...pdf`: Matrici di confusione.
-    *   `C_01_SHAP_Beeswarm...pdf`: Grafici Beeswarm per l'interpretabilità.
-    *   `C_03_PDP...pdf`: Grafici di dipendenza parziale.
+All analysis results and reports are saved within the corresponding `output/test_<timestamp>/` directory:
+*   **Metrics**: `B_01_MetricsTable_Comparative_AllMulticlass.csv`
+*   **Visualizations**:
+    *   `A_01_ClassDistribution...pdf`: Target class distribution representation.
+    *   `B_02_ConfusionMatrix...pdf`: Confusion matrices outlining classification accuracy.
+    *   `C_01_SHAP_Beeswarm...pdf`: Beeswarm plots explaining model interpretability.
+    *   `C_03_PDP...pdf`: Partial dependence plots mapping feature marginal effects.
